@@ -89,21 +89,37 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        state = State(name="Wa")
+        self.db_storage.new(state)
+        self.db_storage.save()
+        result = self.db_storage.all()
+        self.assertIn(state, result.values())
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
-        """test that new adds an object to the database"""
+        """Test that new adds an object to the database"""
+        state = State(name="Wa")
+        self.db_storage.new(state)
+        self.db_storage.save()
+        result = self.db_storage.all()
+        self.assertIn(state, result.values())
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        """Test that save properly saves objects to the database"""
+        state = State(name="Wa")
+        self.db_storage.new(state)
+        self.db_storage.save()
+        self.db_storage.reload()
+        result = self.db_storage.all()
+        self.assertIn(state, result.values())
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     @patch('models.storage.DBStorage.__session')
     def test_get(self):
         """Test that get properly gets objects by id"""
         mock_session = self.db_storage.__session
-        new_state = State(name="California")
+        new_state = State(name="Wa")
         mock_session.add(new_state)
         mock_session.commit()
         state_id = new_state.id
